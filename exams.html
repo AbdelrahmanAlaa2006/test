@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>الامتحانات - منصة مسار التعليمية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --bg-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --bg-secondary: #f8fafc;
+      --text-color: #1a202c;
+      --text-secondary: #64748b;
+      --card-bg: #ffffff;
+      --shadow: 0 10px 25px rgba(0,0,0,0.1);
+      --shadow-hover: 0 20px 40px rgba(0,0,0,0.15);
+      --primary: #667eea;
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      --border-radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.dark {
+      --bg-color: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+      --bg-secondary: #1a202c;
+      --text-color: #f7fafc;
+      --text-secondary: #a0aec0;
+      --card-bg: #2d3748;
+      --shadow: 0 10px 25px rgba(0,0,0,0.3);
+      --shadow-hover: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-secondary);
+      color: var(--text-color);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      transition: var(--transition);
+      min-height: 100vh;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    /* Header Styles */
+    header {
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      animation: slideIn 0.6s ease-out;
+    }
+
+    header .left {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    header .left a {
+      font-weight: bold;
+      font-size: 20px;
+      color: var(--primary);
+      text-decoration: none;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    header img {
+      width: 60px;
+      border-radius: 10px;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .nav-links a.nav-item {
+      position: relative;
+      padding-bottom: 4px;
+      transition: color 0.3s ease, transform 0.3s ease;
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-links a.nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      height: 2px;
+      width: 0%;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a.nav-item:hover {
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.nav-item:hover::after {
+      width: 100%;
+      left: 0;
+    }
+
+    .nav-links a.nav-item.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .nav-links a.nav-item.active::after {
+      width: 100%;
+      left: 0;
+    }
+
+    .theme-toggle {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--primary);
+      color: #fff;
+      transform: rotate(20deg) scale(1.1);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      padding: 120px 20px 60px;
+      background: var(--bg-color);
+      margin-top: 90px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .hero-section h2 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      animation: fadeIn 1s ease-out 0.3s both;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 40px;
+      animation: fadeIn 1s ease-out 0.6s both;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      max-width: 1200px;
+      margin: 40px auto 0;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .breadcrumb-item {
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .breadcrumb-item:hover {
+      color: var(--primary);
+    }
+
+    .breadcrumb-item.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Level Cards */
+    .level-selection {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      padding: 0 20px 60px;
+    }
+
+    .level-card {
+      background: var(--card-bg);
+      padding: 40px 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      animation: fadeIn 0.6s ease-out both;
+    }
+
+    .level-card:nth-child(1) { animation-delay: 0.1s; }
+    .level-card:nth-child(2) { animation-delay: 0.2s; }
+    .level-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .level-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--primary-gradient);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .level-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .level-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .level-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .level-card:hover .level-icon {
+      transform: rotate(10deg) scale(1.1);
+    }
+
+    .level-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-color);
+    }
+
+    .level-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .exam-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 20px;
+      color: var(--primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    /* Exam List */
+    .exam-section {
+      display: none;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .exam-section.active {
+      display: block;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .add-exam {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(72, 187, 120, 0.3);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .add-exam::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .add-exam:hover::before {
+      left: 100%;
+    }
+
+    .add-exam:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(72, 187, 120, 0.5);
+    }
+
+    .exam-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .exam-item {
+      background: var(--card-bg);
+      padding: 28px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      animation: fadeIn 0.6s ease-out both;
+    }
+
+    .exam-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--primary-gradient);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .exam-item:hover::before {
+      transform: scaleX(1);
+    }
+
+    .exam-item:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .exam-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .exam-number {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .exam-lecture {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 8px;
+      margin-top: 16px;
+    }
+
+    /* Back Button */
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 2px solid var(--text-secondary);
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-bottom: 20px;
+    }
+
+    .back-button:hover {
+      background: var(--text-secondary);
+      color: white;
+      transform: translateX(5px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      header .left {
+        gap: 20px;
+      }
+
+      .nav-links {
+        gap: 10px;
+        font-size: 14px;
+      }
+
+      .hero-section {
+        padding: 100px 20px 40px;
+        margin-top: 140px;
+      }
+
+      .hero-section h2 {
+        font-size: 2.2rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .level-selection,
+      .exam-list {
+        grid-template-columns: 1fr;
+        padding: 0 16px 40px;
+      }
+
+      .level-card {
+        padding: 30px 20px;
+      }
+
+      .level-title {
+        font-size: 1.5rem;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+
+      .section-title {
+        font-size: 1.6rem;
+        justify-content: center;
+      }
+
+      .exam-item {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-section h2 {
+        font-size: 1.8rem;
+      }
+
+      .level-title {
+        font-size: 1.3rem;
+      }
+
+      .section-title {
+        font-size: 1.4rem;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+    }
+
+    body.dark .exam-item,
+    body.dark .level-card {
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    body.dark .exam-lecture,
+    body.dark .exam-count {
+      background: rgba(102, 126, 234, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="left">
+      <a href="home.html" onclick="goHome()">مسار</a>
+      <img src="logo.white.png" alt="شعار مسار" />
+    </div>
+    <nav class="nav-links">
+      <a href="home.html" class="nav-item" onclick="goHome()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l9-7 9 7v10a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4H9v4a2 2 0 01-2 2H5a2 2 0 01-2-2V10z" />
+        </svg>
+        الصفحة الرئيسية
+      </a>
+      <a href="videos.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
+        </svg>
+        الفيديوهات المسجلة
+      </a>
+      <a href="exams.html" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m4 0h.01M6 17h.01M4 4h16v16H4V4z" />
+        </svg>
+        الامتحانات
+      </a>
+      <a href="report.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m4 0h.01M6 17h.01M4 4h16v16H4V4z" />
+        </svg>
+        تقرير الطالب
+      </a>
+    </nav>
+    <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle">
+      <span id="themeIcon">🌙</span>
+    </button>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <h2 id="pageTitle">الامتحانات</h2>
+    <p class="hero-subtitle" id="pageSubtitle">اختر مستواك الدراسي وابدأ رحلتك نحو النجاح</p>
+  </div>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb" id="breadcrumb">
+    <span class="breadcrumb-item active" onclick="showLevels()">الامتحانات</span>
+  </div>
+
+  <!-- Level Selection -->
+  <div class="level-selection" id="levelSelection">
+    <div class="level-card" onclick="showExams('first')">
+      <div class="level-icon">1️⃣</div>
+      <div class="level-title">الصف الأول الإعدادي</div>
+      <div class="level-subtitle">First Prep</div>
+      <div class="exam-count">
+        <span>📚</span>
+        <span id="firstCount">2</span> امتحان متاح
+      </div>
+    </div>
+    
+    <div class="level-card" onclick="showExams('second')">
+      <div class="level-icon">2️⃣</div>
+      <div class="level-title">الصف الثاني الإعدادي</div>
+      <div class="level-subtitle">Second Prep</div>
+      <div class="exam-count">
+        <span>📚</span>
+        <span id="secondCount">3</span> امتحان متاح
+      </div>
+    </div>
+    
+    <div class="level-card" onclick="showExams('third')">
+      <div class="level-icon">3️⃣</div>
+      <div class="level-title">الصف الثالث الإعدادي</div>
+      <div class="level-subtitle">Third Prep</div>
+      <div class="exam-count">
+        <span>📚</span>
+        <span id="thirdCount">4</span> امتحان متاح
+      </div>
+    </div>
+  </div>
+
+  <!-- First Prep Exams -->
+  <div class="exam-section" id="firstSection">
+    <button class="back-button" onclick="showLevels()">
+      ← العودة للمستويات
+    </button>
+    <div class="section-header">
+      <div class="section-title">
+        <span>1️⃣</span>
+        امتحانات الصف الأول الإعدادي
+      </div>
+      <button class="add-exam" onclick="addExam('first')">
+        ➕ إضافة امتحان جديد
+      </button>
+    </div>
+    <div class="exam-list" id="firstExamList">
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">1</div>
+          امتحان الرياضيات - الوحدة الأولى
+        </div>
+        <div class="exam-lecture">
+          📘 الأعداد الطبيعية والصحيحة
+        </div>
+      </div>
+      
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">2</div>
+          امتحان العلوم - الفصل الأول
+        </div>
+        <div class="exam-lecture">
+          🔬 المادة وخواصها
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second Prep Exams -->
+  <div class="exam-section" id="secondSection">
+    <button class="back-button" onclick="showLevels()">
+      ← العودة للمستويات
+    </button>
+    <div class="section-header">
+      <div class="section-title">
+        <span>2️⃣</span>
+        امتحانات الصف الثاني الإعدادي
+      </div>
+      <button class="add-exam" onclick="addExam('second')">
+        ➕ إضافة امتحان جديد
+      </button>
+    </div>
+    <div class="exam-list" id="secondExamList">
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">1</div>
+          امتحان الجبر
+        </div>
+        <div class="exam-lecture">
+          📐 المعادلات والمتباينات
+        </div>
+      </div>
+      
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">2</div>
+          امتحان الهندسة
+        </div>
+        <div class="exam-lecture">
+          📏 الدائرة والمثلث
+        </div>
+      </div>
+      
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">3</div>
+          امتحان العلوم المتقدم
+        </div>
+        <div class="exam-lecture">
+          🧪 التفاعلات الكيميائية
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Third Prep Exams -->
+  <div class="exam-section" id="thirdSection">
+    <button class="back-button" onclick="showLevels()">
+      ← العودة للمستويات
+    </button>
+    <div class="section-header">
+      <div class="section-title">
+        <span>3️⃣</span>
+        امتحانات الصف الثالث الإعدادي
+      </div>
+      <button class="add-exam" onclick="addExam('third')">
+        ➕ إضافة امتحان جديد
+      </button>
+    </div>
+    <div class="exam-list" id="thirdExamList">
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">1</div>
+          امتحان الجبر المتقدم
+        </div>
+        <div class="exam-lecture">
+          📊 الإحصاء والاحتمالات
+        </div>
+      </div>
+      
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">2</div>
+          امتحان الهندسة التحليلية
+        </div>
+        <div class="exam-lecture">
+          📈 الإحداثيات والرسم البياني
+        </div>
+      </div>
+      
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">3</div>
+          امتحان الفيزياء
+        </div>
+        <div class="exam-lecture">
+          ⚡ الكهرباء والمغناطيسية
+        </div>
+      </div>
+      
+      <div class="exam-item" onclick="location.href='exam.choice.html'">
+        <div class="exam-title">
+          <div class="exam-number">4</div>
+          امتحان الكيمياء
+        </div>
+        <div class="exam-lecture">
+          🧬 التركيب الذري والجزيئي
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Data structure to hold exams for each level
+    const examData = {
+      first: [
+        { title: "امتحان الرياضيات - الوحدة الأولى", lecture: "الأعداد الطبيعية والصحيحة", icon: "📘" },
+        { title: "امتحان العلوم - الفصل الأول", lecture: "المادة وخواصها", icon: "🔬" }
+      ],
+      second: [
+        { title: "امتحان الجبر", lecture: "المعادلات والمتباينات", icon: "📐" },
+        { title: "امتحان الهندسة", lecture: "الدائرة والمثلث", icon: "📏" },
+        { title: "امتحان العلوم المتقدم", lecture: "التفاعلات الكيميائية", icon: "🧪" }
+      ],
+      third: [
+        { title: "امتحان الجبر المتقدم", lecture: "الإحصاء والاحتمالات", icon: "📊" },
+        { title: "امتحان الهندسة التحليلية", lecture: "الإحداثيات والرسم البياني", icon: "📈" },
+        { title: "امتحان الفيزياء", lecture: "الكهرباء والمغناطيسية", icon: "⚡" },
+        { title: "امتحان الكيمياء", lecture: "التركيب الذري والجزيئي", icon: "🧬" }
+      ]
+    };
+
+    let currentLevel = null;
+
+    // Load saved theme
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+      document.getElementById("themeIcon").textContent = "☀️";
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle("dark");
+      document.getElementById("themeIcon").textContent = isDark ? "☀️" : "🌙";
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+
+    function goHome() {
+      const currentPage = window.location.pathname.split('/').pop();
+      if (currentPage === 'index.html' || currentPage === '') {
+        location.reload();
+      } else {
+        window.location.href = 'index.html';
+      }
+    }
+
+    function showLevels() {
+      // Hide all exam sections
+      document.querySelectorAll('.exam-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Show level selection
+      document.getElementById('levelSelection').style.display = 'grid';
+      
+      // Update page title and subtitle
+      document.getElementById('pageTitle').textContent = 'الامتحانات';
+      document.getElementById('pageSubtitle').textContent = 'اختر مستواك الدراسي وابدأ رحلتك نحو النجاح';
+      
+      // Update breadcrumb
+      document.getElementById('breadcrumb').innerHTML = `
+        <span class="breadcrumb-item active" onclick="showLevels()">الامتحانات</span>
+      `;
+      
+      currentLevel = null;
+      updateExamCounts();
+    }
+
+    function showExams(level) {
+      currentLevel = level;
+      
+      // Hide level selection
+      document.getElementById('levelSelection').style.display = 'none';
+      
+      // Hide all exam sections first
+      document.querySelectorAll('.exam-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Show selected level section
+      document.getElementById(level + 'Section').classList.add('active');
+      
+      // Update page title and subtitle based on level
+      const levelTitles = {
+        first: 'امتحانات الصف الأول الإعدادي',
+        second: 'امتحانات الصف الثاني الإعدادي',
+        third: 'امتحانات الصف الثالث الإعدادي'
+      };
+      
+      const levelSubtitles = {
+        first: 'First Prep - اختر امتحانك وابدأ التحدي',
+        second: 'Second Prep - اختر امتحانك وابدأ التحدي',
+        third: 'Third Prep - اختر امتحانك وابدأ التحدي'
+      };
+      
+      document.getElementById('pageTitle').textContent = levelTitles[level];
+      document.getElementById('pageSubtitle').textContent = levelSubtitles[level];
+      
+      // Update breadcrumb
+      document.getElementById('breadcrumb').innerHTML = `
+        <span class="breadcrumb-item" onclick="showLevels()">الامتحانات</span>
+        <span>›</span>
+        <span class="breadcrumb-item active">${levelTitles[level]}</span>
+      `;
+      
+      // Refresh the exam list to show current exams
+      renderExamList(level);
+    }
+
+    function renderExamList(level) {
+      const examList = document.getElementById(level + 'ExamList');
+      const exams = examData[level];
+      
+      examList.innerHTML = '';
+      
+      exams.forEach((exam, index) => {
+        const examItem = document.createElement('div');
+        examItem.className = 'exam-item';
+        examItem.style.animationDelay = `${(index + 1) * 0.1}s`;
+        examItem.onclick = () => location.href = 'exam.choice.html';
+        
+        examItem.innerHTML = `
+          <div class="exam-title">
+            <div class="exam-number">${index + 1}</div>
+            ${exam.title}
+          </div>
+          <div class="exam-lecture">
+            ${exam.icon} ${exam.lecture}
+          </div>
+        `;
+        
+        examList.appendChild(examItem);
+      });
+    }
+
+    function addExam(level) {
+      const examTitle = prompt('أدخل عنوان الامتحان الجديد:');
+      if (!examTitle || examTitle.trim() === '') {
+        alert('يرجى إدخال عنوان صحيح للامتحان');
+        return;
+      }
+      
+      const examLecture = prompt('أدخل موضوع المحاضرة:');
+      if (!examLecture || examLecture.trim() === '') {
+        alert('يرجى إدخال موضوع المحاضرة');
+        return;
+      }
+      
+      // Icons for different subjects
+      const icons = ['📚', '📘', '📙', '📗', '📕', '🔬', '🧪', '📐', '📏', '📊', '📈', '⚡', '🧬', '🔢', '🌍'];
+      const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+      
+      // Add new exam to data
+      examData[level].push({
+        title: examTitle.trim(),
+        lecture: examLecture.trim(),
+        icon: randomIcon
+      });
+      
+      // Re-render the exam list
+      renderExamList(level);
+      
+      // Update exam counts
+      updateExamCounts();
+      
+      // Show success message
+      const successMsg = document.createElement('div');
+      successMsg.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 10000;
+        font-weight: 600;
+        animation: fadeIn 0.3s ease-out;
+      `;
+      successMsg.textContent = '✅ تم إضافة الامتحان بنجاح!';
+      document.body.appendChild(successMsg);
+      
+      setTimeout(() => {
+        successMsg.remove();
+      }, 2000);
+    }
+
+    function updateExamCounts() {
+      document.getElementById('firstCount').textContent = examData.first.length;
+      document.getElementById('secondCount').textContent = examData.second.length;
+      document.getElementById('thirdCount').textContent = examData.third.length;
+    }
+
+    // Add keyboard navigation for level cards
+    document.querySelectorAll('.level-card').forEach(card => {
+      card.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
+      card.setAttribute('tabindex', '0');
+    });
+
+    // Add keyboard navigation for exam items
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.exam-item')) {
+        const examItems = document.querySelectorAll('.exam-item');
+        examItems.forEach(item => {
+          item.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.click();
+            }
+          });
+          item.setAttribute('tabindex', '0');
+        });
+      }
+    });
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      showLevels();
+      updateExamCounts();
+    });
+
+    // Add loading animation on page transitions
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.exam-item, .add-exam')) {
+        e.target.closest('.exam-item, .add-exam').classList.add('loading-shimmer');
+      }
+    });
+  </script>
+</body>
+</html>

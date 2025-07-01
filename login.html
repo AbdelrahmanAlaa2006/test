@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - مسار</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 999;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(6px);
+      border-radius: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      padding: 4px;
+      display: flex;
+      gap: 2px;
+      transition: 0.3s ease-in-out;
+    }
+
+    .lang-toggle button {
+      border: none;
+      background-color: transparent;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .lang-toggle button.active {
+      background: #764ba2;
+    }
+
+    .fade-all {
+      animation: fadeAll 0.5s ease-in-out;
+    }
+
+    @keyframes fadeAll {
+      0% { opacity: 0.2; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .left-section {
+      width: 65%;
+      min-width: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: slideInLeft 2s ease-out forwards;
+      background-image: url('background4.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: transparent;
+      position: relative;
+      z-index: 1;
+    }
+
+    .left-section .overlay {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+      border-radius: inherit;
+    }
+
+    .left-section .login {
+      position: relative;
+      z-index: 2;
+    }
+
+    .login {
+      width: 350px;
+      padding: 40px;
+      background: #eee;
+      color: #573b8a;
+      border-radius: 60% / 10%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateY(50px);
+      animation: popIn 0.5s ease-out forwards, float 3s ease-in-out infinite;
+    }
+
+    .login h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #573b8a;
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .input-wrapper i {
+  position: absolute;
+  left: 15px;
+  top: 12px; /* بدل 50% */
+  transform: none; /* ألغي تأثير المنتصف */
+  color: #888;
+  font-size: 16px;
+}
+
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 12px 12px 12px 40px;
+      border-radius: 25px;
+      border: 1px solid #ccc;
+      background-color:  #dbeffa;
+      outline: none;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .input-wrapper input:focus {
+      border-color: #ba68c8;
+      background-color: #fff;
+      transform: scale(1.02);
+      transition: all 0.3s ease;
+    }
+
+    .input-feedback {
+      color: #e74c3c;
+      font-size: 0.8rem;
+      margin-top: 5px;
+      height: 16px;
+      display: block;
+      transition: opacity 0.3s;
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .remember-text {
+      margin-left: 5px;
+      color: #555;
+    }
+
+    .forgot {
+      text-decoration: none;
+      color: #764ba2;
+    }
+
+    .forgot:hover {
+      text-decoration: underline;
+    }
+
+    .modern-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #764ba2;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .modern-btn:hover {
+      background-color: #5a3a88;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 18px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #764ba2;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #ddd;
+      border-top: 3px solid #764ba2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading {
+      display: none;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #764ba2;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .right-section {
+      width: 35%;
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      animation: popIn 2.5s 0.3s ease-out forwards;
+      animation: fadeIn 3s ease-in forwards;
+    }
+
+    .right-content {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 30px 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .right-content img {
+      width: 120px;
+      margin-bottom: 20px;
+      animation: popIn 1s ease-in-out;
+    }
+
+    .right-section h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .right-section p {
+      font-size: 16.5px;
+      line-height: 1.8;
+      color: #f0f0f0;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes slideInLeft {
+      0% { transform: translateX(-100%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lang-toggle">
+    <button onclick="switchLang('en')" id="btn-en">English</button>
+    <button onclick="switchLang('ar')" id="btn-ar">Arabic</button>
+  </div>
+
+  <div class="left-section fade-all">
+    <div class="overlay"></div>
+    <div class="login modern-login-box">
+      <h2 data-i18n="login">Login</h2>
+      <form onsubmit="animateLogin(event)">
+        <div class="input-wrapper">
+          <i class="fas fa-user"></i>
+          <input type="text" name="username" required placeholder="Username" data-i18n-placeholder="username" 
+                 oninput="validateInput(this)" data-error="Username must be at least 3 characters"
+                 aria-describedby="username-feedback" />
+          <span id="username-feedback" class="input-feedback" aria-live="polite"></span>
+        </div>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" required placeholder="Password" data-i18n-placeholder="password" id="passwordInput" oninput="validateInput(this)" />
+          <button type="button" onclick="togglePassword()" style="position: absolute; Right: 44px;
+Top: 7%;; transform: translateY(-50%); background: none; border: none; color: #764ba2; cursor: pointer;">
+            <i class="fas fa-eye" id="togglePasswordIcon"></i>
+          </button>
+        </div>
+
+        <div class="form-options">
+          <label class="switch">
+            <input type="checkbox" id="rememberMe" />
+            <span class="slider round"></span>
+          </label>
+          <span class="remember-text" data-i18n="remember">Remember me</span>
+          <a href="#" class="forgot" data-i18n="forgot">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="modern-btn" data-i18n="login">
+          <span class="btn-text">Login</span>
+          <span class="btn-loader" style="display:none;">
+            <span class="spinner"></span>
+          </span>
+        </button>
+
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <span data-i18n="logging">Logging in...</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="right-section fade-all">
+    <div class="right-content">
+      <img src="logo.white.png" alt="شعار مسار" />
+      <h2 data-i18n="platform-title">منصة مسار التعليمية</h2>
+      <p data-i18n="platform-description">
+        منصة <strong>مسار</strong> تقدم لك تجربة تعليمية متكاملة<br>
+        تشمل الدروس التفاعلية، التمارين، والاختبارات الإلكترونية.<br><br>
+        تعلم أينما كنت، وبالطريقة التي تناسبك.<br>
+        انطلق الآن وابدأ مسارك نحو التميز والنجاح!
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function animateLogin(event) {
+      event.preventDefault();
+      const loading = document.getElementById("loading");
+      const loginButton = event.target.querySelector('button[type="submit"]');
+
+      loading.style.display = "flex";
+      loginButton.disabled = true;
+      loginButton.style.cursor = "not-allowed";
+
+      setTimeout(() => {
+        window.location.href = "home.html";
+      }, 2000);
+    }
+
+    const translations = {
+      ar: {
+        login: "تسجيل الدخول",
+        username: "اسم المستخدم",
+        password: "كلمة المرور",
+        remember: "تذكرني",
+        forgot: "نسيت كلمة المرور؟",
+        logging: "جارٍ تسجيل الدخول...",
+        "platform-title": "منصة مسار التعليمية",
+        "platform-description": "منصة مسار تقدم لك تجربة تعليمية متكاملة تشمل الدروس التفاعلية، التمارين، والاختبارات الإلكترونية. تعلم أينما كنت، وبالطريقة التي تناسبك. انطلق الآن وابدأ مسارك نحو التميز والنجاح."
+      },
+      en: {
+        login: "Login",
+        username: "Username",
+        password: "Password",
+        remember: "Remember me",
+        forgot: "Forgot password?",
+        logging: "Logging in...",
+        "platform-title": "Masar Educational Platform",
+        "platform-description": "The Masar platform offers you a comprehensive educational experience, including interactive lessons, exercises, and online tests. Learn wherever you are, in the way that suits you. Get started now and begin your path to excellence and success."
+      }
+    };
+
+    function translatePage() {
+      const lang = localStorage.getItem('lang') || 'en';
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = translations[lang][key] || el.textContent;
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.placeholder = translations[lang][key] || el.placeholder;
+      });
+      document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.body.classList.add("fade-all");
+      setTimeout(() => document.body.classList.remove("fade-all"), 800);
+    }
+
+    function switchLang(lang) {
+      localStorage.setItem('lang', lang);
+      translatePage();
+    }
+
+    function togglePassword() {
+      const passwordInput = document.getElementById('passwordInput');
+      const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        togglePasswordIcon.classList.remove('fa-eye');
+        togglePasswordIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = "password";
+        togglePasswordIcon.classList.remove('fa-eye-slash');
+        togglePasswordIcon.classList.add('fa-eye');
+      }
+    }
+
+    function validateInput(input) {
+      const feedback = document.getElementById(`${input.name}-feedback`);
+      if (input.value.trim().length < 3) {
+        input.style.borderColor = "red";
+        if (feedback) feedback.textContent = input.dataset.error || "Minimum 3 characters";
+      } else {
+        input.style.borderColor = "#ccc";
+        if (feedback) feedback.textContent = "";
+      }
+    }
+
+    window.onload = translatePage;
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</body>
+</html>

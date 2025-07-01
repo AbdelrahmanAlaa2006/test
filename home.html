@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>منصة مسار التعليمية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --text-color: #2d3748;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --accent: #ed64a6;
+    }
+
+    body.dark {
+      --bg-color: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+      --text-color: #f7fafc;
+      --card-bg: rgba(45, 55, 72, 0.95);
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: all 0.6s ease;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+      z-index: -1;
+      animation: backgroundMove 20s ease-in-out infinite;
+    }
+
+    @keyframes backgroundMove {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      25% { transform: translateX(-10px) translateY(-10px); }
+      50% { transform: translateX(10px) translateY(-5px); }
+      75% { transform: translateX(-5px) translateY(10px); }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header .left {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .logo-text {
+      font-weight: bold;
+      font-size: 24px;
+      background: linear-gradient(45deg, #667eea, #764ba2, #ed64a6);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      animation: logoFloat 3s ease-in-out infinite, gradientShift 4s ease-in-out infinite;
+      transform-origin: center;
+      display: inline-block;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-5px) scale(1.05); }
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    header img {
+      width: 60px;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+      animation: logoRotate 8s linear infinite;
+    }
+
+    @keyframes logoRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .nav-links a.nav-item {
+      position: relative;
+      padding: 8px 16px;
+      transition: all 0.3s ease;
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-links a.nav-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .theme-toggle {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(180deg) scale(1.1);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ed64a6 100%);
+      background-size: 400% 400%;
+      animation: gradientAnimation 8s ease infinite;
+      color: white;
+      text-align: center;
+      padding: 140px 20px 100px;
+      margin-top: 90px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes gradientAnimation {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="40%"><stop offset="0%" stop-color="%23fff" stop-opacity="1"/><stop offset="99%" stop-color="%23fff" stop-opacity="0"/></radialGradient></defs><circle cx="10" cy="10" r="1" fill="url(%23a)"/><circle cx="30" cy="5" r="1" fill="url(%23a)"/><circle cx="60" cy="15" r="1" fill="url(%23a)"/><circle cx="80" cy="10" r="1" fill="url(%23a)"/></svg>') repeat;
+      opacity: 0.1;
+      animation: sparkle 20s linear infinite;
+    }
+
+    @keyframes sparkle {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100px); }
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 25px;
+      animation: slideInUp 1s ease-out;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      animation: slideInUp 1s ease-out 0.2s both;
+      line-height: 1.6;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .hero a {
+      background: linear-gradient(45deg, #fff, #f0f8ff);
+      color: #667eea;
+      padding: 15px 35px;
+      font-weight: 700;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      animation: slideInUp 1s ease-out 0.4s both;
+      display: inline-block;
+    }
+
+    .hero a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.5s;
+    }
+
+    .hero a:hover::before {
+      left: 100%;
+    }
+
+    .hero a:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 50px;
+      flex-wrap: wrap;
+      padding: 80px 20px;
+      position: relative;
+    }
+
+    .card {
+      width: 240px;
+      height: 280px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0;
+      transform: translateY(50px);
+      animation: cardAppear 1s forwards;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(237, 100, 166, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.2s; }
+    .card:nth-child(2) { animation-delay: 0.4s; }
+    .card:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes cardAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card:hover {
+      transform: translateY(-15px) scale(1.08) rotateY(5deg);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+    }
+
+    .card img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+      border-radius: 15px;
+      object-fit: cover;
+    }
+
+    .card:hover img {
+      transform: scale(1.2) rotate(10deg);
+    }
+
+    .card h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card p {
+      font-size: 16px;
+      color: rgba(136, 136, 136, 0.8);
+      line-height: 1.5;
+    }
+
+    .greeting-section {
+      background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #4a5568 100%);
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .greeting-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 30% 70%, rgba(237, 100, 166, 0.2) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 30%, rgba(102, 126, 234, 0.2) 0%, transparent 50%);
+      animation: backgroundPulse 10s ease-in-out infinite;
+    }
+
+    @keyframes backgroundPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    .greeting-section h2 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 25px;
+      animation: textGlow 2s ease-in-out infinite alternate;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes textGlow {
+      from { text-shadow: 0 0 20px rgba(118, 75, 162, 0.5); }
+      to { text-shadow: 0 0 30px rgba(118, 75, 162, 0.8), 0 0 40px rgba(118, 75, 162, 0.3); }
+    }
+
+    .greeting-section .name-highlight {
+      background: linear-gradient(45deg, #764ba2, #ed64a6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: nameFloat 3s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes nameFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .greeting-section p {
+      margin-top: 20px;
+      font-size: 20px;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-button {
+      border: 3px solid #764ba2;
+      background: linear-gradient(45deg, transparent, rgba(118, 75, 162, 0.1));
+      color: #764ba2;
+      padding: 15px 30px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .contact-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #764ba2, #ed64a6);
+      transition: left 0.3s ease;
+      z-index: -1;
+    }
+
+    .contact-button:hover::before {
+      left: 0;
+    }
+
+    .contact-button:hover {
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(118, 75, 162, 0.4);
+    }
+
+    .features-grid {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 50px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-item {
+      text-align: center;
+      transition: transform 0.3s ease;
+      animation: featureFloat 4s ease-in-out infinite;
+    }
+
+    .feature-item:nth-child(2) { animation-delay: 1s; }
+    .feature-item:nth-child(3) { animation-delay: 2s; }
+
+    @keyframes featureFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .feature-item:hover {
+      transform: scale(1.1) translateY(-5px);
+    }
+
+    .feature-item img {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 20px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+    }
+
+    .feature-item:hover img {
+      filter: drop-shadow(0 10px 25px rgba(118, 75, 162, 0.4));
+      transform: rotate(5deg);
+    }
+
+    .feature-text {
+      color: #764ba2;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        gap: 40px;
+        padding: 60px 20px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero p {
+        font-size: 18px;
+      }
+
+      .card {
+        width: 280px;
+        height: 300px;
+      }
+
+      nav {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .greeting-section h2 {
+        font-size: 28px;
+      }
+
+      .features-grid {
+        gap: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الهيدر -->
+  <header>
+    <div class="left">
+      <a href="#" class="logo-text">مسار</a>
+      <img src="logo.white.png" alt="شعار مسار" />
+    </div>
+    <nav class="nav-links">
+      <a href="#" class="nav-item" onclick="goHome()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l9-7 9 7v10a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4H9v4a2 2 0 01-2 2H5a2 2 0 01-2-2V10z" />
+        </svg>
+        الصفحة الرئيسية
+      </a>
+      <a href="videos.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
+        </svg>
+        الفيديوهات المسجلة
+      </a>
+      <a href="exams.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m4 0h.01M6 17h.01M4 4h16v16H4V4z" />
+        </svg>
+        الامتحانات
+      </a>
+      <a href="report.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m4 0h.01M6 17h.01M4 4h16v16H4V4z" />
+        </svg>
+        تقرير الطالب
+      </a>
+    </nav>
+    <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle">
+      <span id="themeIcon">🌙</span>
+    </button>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>طور مهاراتك مع منصة مسار</h1>
+    <p>أكتشف مجموعة واسعة من الدورات التعليمية المصممة خصيصًا للطلاب، من البرمجة إلى التصميم الجرافيكي. كل ما تحتاجه لتطوير مهاراتك وتحقيق أهدافك المهنية.</p>
+    <a href="#cards">ابدأ التعلم الآن</a>
+  </section>
+
+  <!-- Cards Section -->
+  <div id="cards" class="container">
+    <div class="card" onclick="location.href='lectures.html'">
+      <img src="emoji.lecture.png" alt="Lectures Icon" />
+      <h2>Lectures</h2>
+      <p>All your course notes & PDFs</p>
+    </div>
+    <div class="card" onclick="location.href='exams.html'">
+      <img src="emoji.exam.png" alt="Exams Icon" />
+      <h2>Exams</h2>
+      <p>Practice tests and past exams</p>
+    </div>
+    <div class="card" onclick="location.href='videos.html'">
+      <img src="emojis_video_icon.png" alt="Videos Icon" />
+      <h2>Videos</h2>
+      <p>Watch learning videos</p>
+    </div>
+  </div>
+
+  <!-- Greeting Section -->
+  <section class="greeting-section">
+    <h2>
+      يومك سعيد يا <span class="name-highlight">زياد مدحت مسعود أبو صمادة</span>
+    </h2>
+    <p>
+      لو بتواجهك أي مشاكل أو عندك أي استفسارات أو اقتراحات أو أي حاجة عايزنا نعرفها متترددش إنك تتواصل معانا
+    </p>
+
+    <div style="margin-top: 40px;">
+      <a href="#contact" class="contact-button">
+        اتصل بنا
+      </a>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-item">
+        <img src="succes2.jpeg" alt="طريقك للنجاح" />
+        <p class="feature-text">طريقك للنجاح</p>
+      </div>
+      <div class="feature-item">
+        <img src="succes..jpeg" alt="دورات عالية الجودة" />
+        <p class="feature-text">دورات عالية الجودة</p>
+      </div>
+      <div class="feature-item">
+        <img src="learning.jpeg" alt="اتعلم أي حاجة" />
+        <p class="feature-text">اتعلم أي حاجة تيجي في بالك</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Theme functionality (without localStorage)
+    let isDarkMode = false;
+
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle("dark", isDarkMode);
+      document.getElementById("themeIcon").textContent = isDarkMode ? "☀️" : "🌙";
+    }
+
+    function goHome() {
+      const currentPage = window.location.pathname.split('/').pop();
+      if (currentPage === 'index.html' || currentPage === '') {
+        location.reload();
+      } else {
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Add scroll animations
+    window.addEventListener('scroll', () => {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        const cardTop = card.getBoundingClientRect().top;
+        const cardVisible = 150;
+        
+        if (cardTop < window.innerHeight - cardVisible) {
+          card.style.transform = 'translateY(0)';
+          card.style.opacity = '1';
+        }
+      });
+    });
+
+    // Add dynamic particle effect
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.style.cssText = `
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: -1;
+        animation: particleFloat 6s linear infinite;
+      `;
+      
+      particle.style.left = Math.random() * 100 + 'vw';
+      particle.style.animationDelay = Math.random() * 6 + 's';
+      
+      document.body.appendChild(particle);
+      
+      setTimeout(() => particle.remove(), 6000);
+    }
+
+    // Create particles periodically
+    setInterval(createParticle, 800);
+
+    // Add CSS for particle animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes particleFloat {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+
+</body>
+</html>

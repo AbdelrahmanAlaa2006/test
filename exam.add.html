@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>إنشاء امتحان - منصة مسار التعليمية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-color: #0f0f23;
+      --text-color: #e2e8f0;
+      --card-bg: rgba(30, 41, 59, 0.8);
+      --primary: #6366f1;
+      --secondary: #8b5cf6;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+    body.dark {
+      --bg-color: #1e1e2f;
+      --text-color: #f9f9f9;
+      --card-bg: #2c2c3e;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--bg-color) 0%, #1a1a2e 50%, #16213e 100%);
+      color: var(--text-color);
+      transition: all 0.4s ease;
+      padding-top: 100px;
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Background Animation */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+      z-index: -1;
+      animation: backgroundShift 20s ease-in-out infinite;
+    }
+    
+    @keyframes backgroundShift {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    header {
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+    header .left {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    
+    /* Logo Animation */
+    header img {
+      width: 60px;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    header img:hover {
+      transform: scale(1.1) translateY(-3px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+    }
+    
+    /* مسار Animation */
+    .logo-text {
+      font-weight: bold; 
+      font-size: 20px; 
+      color: #4f46e5; 
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .logo-text::before {
+      content: 'مسار';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #6366f1, #8b5cf6, #06b6d4);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textFly 4s ease-in-out infinite;
+    }
+    
+    @keyframes textFly {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      25% { transform: translateY(-3px) scale(1.05); }
+      50% { transform: translateY(-5px) scale(1.1); }
+      75% { transform: translateY(-3px) scale(1.05); }
+    }
+    
+    nav {
+      display: flex;
+      gap: 30px;
+      font-size: 16px;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .nav-links a.nav-item {
+      position: relative;
+      padding-bottom: 4px;
+      transition: color 0.3s ease, transform 0.3s ease;
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-links a.nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      height: 2px;
+      width: 0%;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+    .nav-links a.nav-item:hover {
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .nav-links a.nav-item:hover::after {
+      width: 100%;
+      left: 0;
+    }
+    .theme-toggle {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .theme-toggle:hover {
+      background-color: var(--primary);
+      color: #fff;
+      transform: rotate(20deg);
+    }
+
+    .main-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      animation: fadeInUp 0.8s ease;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #6366f1, #8b5cf6, #06b6d4);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titleGlow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes titleGlow {
+      from { text-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+      to { text-shadow: 0 0 30px rgba(139, 92, 246, 0.8); }
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+      animation: slideInRight 0.6s ease;
+      animation-fill-mode: both;
+    }
+    
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-color);
+      font-size: 1.1rem;
+    }
+    
+    input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      background: var(--card-bg);
+      color: var(--text-color);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 4px 20px rgba(0,0,0,0.2);
+      transform: translateY(-2px);
+    }
+    
+    textarea {
+      height: 80px;
+      resize: vertical;
+    }
+    
+    .question-block {
+      padding: 25px;
+      background: var(--card-bg);
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      animation: questionSlideIn 0.6s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .question-block::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .question-block:hover::before {
+      left: 100%;
+    }
+    
+    .question-block:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(99, 102, 241, 0.2);
+      border-color: var(--primary);
+    }
+    
+    @keyframes questionSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .btn {
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .btn:hover::before {
+      left: 100%;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+    
+    .option-input {
+      display: block;
+      margin: 8px 0;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+      transition: all 0.3s ease;
+    }
+    
+    .option-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+      transform: translateX(5px);
+    }
+    
+    .correct-answer {
+      background: rgba(16, 185, 129, 0.1) !important;
+      border-color: var(--success) !important;
+    }
+    
+    .preview {
+      margin-top: 50px;
+      padding: 30px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: previewFadeIn 0.8s ease;
+    }
+    
+    @keyframes previewFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .preview h2 {
+      color: var(--accent);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    #previewPanel {
+      animation: contentFadeIn 1s ease 0.5s both;
+    }
+    
+    @keyframes contentFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .success-message {
+      background: linear-gradient(45deg, var(--success), #34d399);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 12px;
+      text-align: center;
+      margin: 20px 0;
+      animation: successPulse 0.6s ease;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    @keyframes successPulse {
+      0% { transform: scale(0.9); opacity: 0; }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .main-container {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .question-block {
+        padding: 20px;
+      }
+      .btn {
+        padding: 12px 24px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الهيدر المتفاعل بالأيقونات -->
+  <header>
+    <div class="left">
+      <a href="home.html" class="logo-text">مسار</a>
+      <img src="logo.white.png" alt="شعار مسار" />
+    </div>
+    <nav class="nav-links">
+      <a href="home.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l9-7 9 7v10a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4H9v4a2 2 0 01-2 2H5a2 2 0 01-2-2V10z" />
+        </svg>
+        الصفحة الرئيسية
+      </a>
+      <a href="videos.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
+        </svg>  
+        الفيديوهات المسجلة
+      </a>
+      <a href="exams.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m4 0h.01M6 17h.01M4 4h16v16H4V4z" />
+        </svg>
+        الامتحانات
+      </a>
+      <a href="report.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m4 0h.01M6 17h.01M4 4h16v16H4V4z" />
+        </svg>
+        تقرير الطالب
+      </a>
+    </nav>
+    <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle">
+      <span id="themeIcon">🌙</span>
+    </button>
+  </header>
+
+  <!-- إنشاء الامتحان -->
+  <div class="main-container">
+    <h1>🛠 إنشاء امتحان</h1>
+
+    <div class="form-group">
+      <label for="examNumber">🔢 رقم الامتحان:</label>
+      <input type="number" id="examNumber" placeholder="مثلاً 5" />
+    </div>
+
+    <div class="form-group">
+      <label for="examTitle">📝 عنوان الامتحان:</label>
+      <input type="text" id="examTitle" placeholder="مثلاً: حساب تفاضلي متقدم" />
+    </div>
+
+    <div class="form-group">
+      <label for="duration">⏰ مدة الامتحان (بالدقائق):</label>
+      <input type="number" id="duration" placeholder="مثلاً 60" />
+    </div>
+
+    <div class="form-group">
+      <label for="numQuestions">❓ عدد الأسئلة:</label>
+      <input type="number" id="numQuestions" placeholder="مثلاً 3" />
+      <button class="btn" onclick="generateQuestions()">✨ إنشاء الأسئلة</button>
+    </div>
+
+    <div id="questionsContainer"></div>
+    <button class="btn" onclick="saveExam()">💾 حفظ ومعاينة الامتحان</button>
+
+    <div class="preview" id="previewSection" style="display: none;">
+      <h2>🧪 المعاينة:</h2>
+      <div id="previewPanel"></div>
+    </div>
+  </div>
+
+  <script>
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+      document.getElementById("themeIcon").textContent = "☀️";
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle("dark");
+      document.getElementById("themeIcon").textContent = isDark ? "☀️" : "🌙";
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+
+    function generateQuestions() {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+      const count = parseInt(document.getElementById('numQuestions').value);
+
+      if (!count || count <= 0) {
+        alert('يرجى إدخال عدد صحيح من الأسئلة');
+        return;
+      }
+
+      for (let i = 0; i < count; i++) {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+        block.style.animationDelay = `${i * 0.1}s`;
+        block.innerHTML = `
+          <label>❓ السؤال ${i + 1}:</label>
+          <textarea name="question" placeholder="اكتب السؤال هنا..."></textarea>
+          <label>📋 الاختيارات:</label>
+          <input type="text" class="option-input" placeholder="الخيار الأول">
+          <input type="text" class="option-input" placeholder="الخيار الثاني">
+          <input type="text" class="option-input" placeholder="الخيار الثالث">
+          <input type="text" class="option-input" placeholder="الخيار الرابع">
+          <label>✅ رقم الإجابة الصحيحة (1-4):</label>
+          <input type="number" min="1" max="4" class="correct-answer" placeholder="1">
+        `;
+        container.appendChild(block);
+      }
+    }
+
+    function saveExam() {
+      const examNumber = document.getElementById('examNumber').value.trim();
+      const examTitle = document.getElementById('examTitle').value.trim();
+      const duration = parseInt(document.getElementById('duration').value);
+      const blocks = document.querySelectorAll('.question-block');
+      
+      if (!examNumber || !examTitle || !duration || blocks.length === 0) {
+        alert('يرجى ملء جميع البيانات المطلوبة');
+        return;
+      }
+
+      const exam = {
+        number: examNumber,
+        title: examTitle,
+        duration,
+        questions: []
+      };
+
+      let isValid = true;
+      blocks.forEach(block => {
+        const question = block.querySelector('textarea').value.trim();
+        const options = Array.from(block.querySelectorAll('.option-input')).map(i => i.value.trim());
+        const correct = parseInt(block.querySelector('.correct-answer').value) - 1;
+        
+        if (!question || options.some(opt => !opt) || isNaN(correct) || correct < 0 || correct > 3) {
+          isValid = false;
+        }
+        
+        exam.questions.push({ question, options, answer: correct });
+      });
+
+      if (!isValid) {
+        alert('يرجى التأكد من ملء جميع الأسئلة والاختيارات والإجابات الصحيحة');
+        return;
+      }
+
+      showPreview(exam);
+      showSuccessMessage();
+      
+      setTimeout(() => {
+        window.location.href = 'exams.html';
+      }, 3000);
+    }
+
+    function showPreview(exam) {
+      const panel = document.getElementById('previewPanel');
+      const previewSection = document.getElementById('previewSection');
+      panel.innerHTML = '';
+
+      panel.innerHTML += `<h3>📝 الامتحان رقم ${exam.number}</h3>`;
+      panel.innerHTML += `<p><strong>العنوان:</strong> ${exam.title}</p>`;
+      panel.innerHTML += `<p><strong>المدة:</strong> ${exam.duration} دقيقة</p>`;
+      panel.innerHTML += `<hr style="margin: 20px 0; border: 1px solid rgba(255,255,255,0.1);">`;
+
+      exam.questions.forEach((q, idx) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question-block';
+        qDiv.innerHTML = `
+          <strong>س${idx + 1}: ${q.question}</strong><br><br>
+          ${q.options.map((opt, i) => `
+            <div style="margin: 8px 0; padding: 8px; background: ${i === q.answer ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)'}; border-radius: 6px; ${i === q.answer ? 'border-right: 3px solid #10b981;' : ''}">
+              ${String.fromCharCode(65 + i)}. ${opt} ${i === q.answer ? '✅' : ''}
+            </div>
+          `).join('')}
+        `;
+        panel.appendChild(qDiv);
+      });
+      
+      previewSection.style.display = 'block';
+      previewSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showSuccessMessage() {
+      const message = document.createElement('div');
+      message.className = 'success-message';
+      message.innerHTML = '🎉 تم حفظ الامتحان بنجاح! سيتم توجيهك إلى صفحة الامتحانات...';
+      
+      const container = document.querySelector('.main-container');
+      container.insertBefore(message, container.firstChild);
+      
+      setTimeout(() => {
+        message.remove();
+      }, 3000);
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+const level = urlParams.get('level'); // مثلاً: 'first'
+
+  </script>
+</body>
+</html>
